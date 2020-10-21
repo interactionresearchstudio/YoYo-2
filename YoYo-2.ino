@@ -12,6 +12,8 @@
 
 int BUTTON_BUILTIN =  0;
 
+#define POT 13
+
 bool disconnected = false;
 
 unsigned long wificheckMillis;
@@ -62,34 +64,20 @@ SocketIoClient socketIO;
 #include <AceButton.h>
 using namespace ace_button;
 
-//rgb led variables
-#include <FastLED.h>
-#define WS2812PIN        5
-#define NUMPIXELS 2
-#define PIXELUPDATETIME 30
-#define PIXELUPDATETIMELONG 5000
-#define USERLED 0
-#define REMOTELED 1
-#define RGBLEDPWMSTART 120
-#define FASTLONGFADE 120
-unsigned long LONGFADEMINUTESMAX = 360;
-#define LONGFADECHECKMILLIS 60000
-unsigned long  prevLongFadeVal[NUMPIXELS] = {0,0};
-uint8_t hue[NUMPIXELS];
-uint8_t saturation[NUMPIXELS];
-uint8_t value[NUMPIXELS];
-bool ledChanged[NUMPIXELS] = {false, false};
-unsigned long prevPixelMillis;
-bool isLongFade[NUMPIXELS]= {false,false};
-unsigned long prevlongPixelMillis;
-unsigned long longFadeMinutes[NUMPIXELS];
-unsigned long prevLongFadeMillis[NUMPIXELS];
-bool isRemoteLedFading = false;
-CRGB leds[NUMPIXELS];
-bool readyToFadeRGB[NUMPIXELS] = {false, false};
-bool isFadingRGB[NUMPIXELS] = {false, false};
-unsigned long fadeTimeRGB[NUMPIXELS];
-#define RGBFADEMILLIS 6
+//Servo
+#include <ESP32Servo.h>
+#define NUMSERVOS 2
+#define USERSERVO 0
+#define REMOTESERVO 1
+Servo servo[2];
+int servoPin[2] = {18, 19};
+#define POT_REFRESH 200
+long prevPotMillis = 0;
+byte currAngle[2];
+byte prevAngle[2];
+long prevServoMillis;
+#define SERVO_REFRESH_RATE 100
+
 
 #include "SPIFFS.h"
 
@@ -173,10 +161,9 @@ int port = 80; // Socket.IO Port Address
 char path[] = "/socket.io/?transport=websocket"; // Socket.IO Base Path
 
 void setup() {
-  setupPixels();
   Serial.begin(115200);
+  setupServo();
   setupPins();
-  LONGFADEMINUTESMAX = checkFadingLength();
   setupCapacitiveTouch();
 
   //create 10 digit ID
@@ -263,11 +250,12 @@ void loop() {
     case setup_finished:
       socketIO.loop();
       ledHandler();
-      rgbLedHandler();
       wifiCheck();
+      servoHandler();
       break;
   }
-
+  servoHandler();
+  potHandler();
   buttonBuiltIn.check();
   buttonExternal.check();
   buttonTouch.check();

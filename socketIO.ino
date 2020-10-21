@@ -33,20 +33,11 @@ void socketIO_msg(const char * payload, size_t length) {
   Serial.print("Which is of type ");
   Serial.println(data_project);
 
-  if (String(data_project) == "lighttouch") {
-    long data_hue = incomingDoc["data"]["hue"];
-    Serial.print("Light touch! Hue: ");
-    Serial.println(data_hue);
-    // TODO - Run light touch
-    hue[REMOTELED] = (uint8_t)data_hue;
-    ledChanged[REMOTELED] = true;
-   //added to enable reset of fading mid fade
-    isFadingRGB[REMOTELED] = false;
-    fadeRGB(REMOTELED);
-    startLongFade(REMOTELED);
-  }
-  else if (String(data_project) == "test") {
+  if (String(data_project) == "test") {
     blinkDevice();
+  } else if (String(data_project) == "YoYo2") {
+    long servo_angle = incomingDoc["data"]["angle"];
+     setServoAngle(REMOTESERVO,servo_angle);
   }
 }
 
@@ -62,14 +53,14 @@ void socketIO_sendButtonPress() {
   socketIO.emit("msg", sender.c_str());
 }
 
-void socketIO_sendColour() {
-  Serial.println("colour send");
+void socketIO_sendServo() {
+  Serial.println("Servo send");
   const size_t capacity = 3 * JSON_OBJECT_SIZE(2);
   DynamicJsonDocument doc(capacity);
   doc["macAddress"] = getRemoteMacAddress(1);
   JsonObject data = doc.createNestedObject("data");
-  data["project"] = "lighttouch";
-  data["hue"] = String((int)getUserHue());
+  data["project"] = "YoYo2";
+  data["angle"] = String(getServoAngle(USERSERVO));
   String sender;
   serializeJson(doc, sender);
   socketIO.emit("msg", sender.c_str());

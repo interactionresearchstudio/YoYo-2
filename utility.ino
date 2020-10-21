@@ -7,6 +7,8 @@ void setupPins() {
   pinMode(FADE_3, INPUT_PULLUP);
   pinMode(FADE_1, INPUT_PULLUP);
 
+  pinMode(POT, INPUT);
+
   ButtonConfig* buttonConfigBuiltIn = buttonBuiltIn.getButtonConfig();
   buttonConfigBuiltIn->setEventHandler(handleButtonEvent);
   buttonConfigBuiltIn->setFeature(ButtonConfig::kFeatureClick);
@@ -79,21 +81,9 @@ void handleButtonEvent(AceButton* button, uint8_t eventType, uint8_t buttonState
           break;
         case AceButton::kEventLongPressed:
           Serial.println("TOUCH: Long pressed");
-          isSelectingColour = true;
-          ledChanged[USERLED] = true;
-          // TODO also hold the LED at the colour for a little bit
           break;
         case AceButton::kEventReleased:
           Serial.println("TOUCH: released");
-          if (isSelectingColour == true) {
-            ledChanged[USERLED] = true;
-            fadeRGB(USERLED);
-          } else {
-            ledChanged[USERLED] = true;
-            fadeRGB(USERLED);
-            socketIO_sendColour();
-          }
-          isSelectingColour = false;
           break;
         case AceButton::kEventClicked:
           Serial.println("TOUCH: clicked");
@@ -113,23 +103,9 @@ void handleTouchEvent(AceButton* button, uint8_t eventType, uint8_t buttonState)
       break;
     case AceButton::kEventLongPressed:
       Serial.println("TOUCH: Long pressed");
-      isSelectingColour = true;
-      ledChanged[USERLED] = true;
-      // TODO also hold the LED at the colour for a little bit
       break;
     case AceButton::kEventReleased:
       Serial.println("TOUCH: released");
-      if (isSelectingColour == true) {
-        ledChanged[USERLED] = true;
-        fadeRGB(USERLED);
-      } else {
-        ledChanged[USERLED] = true;
-        fadeRGB(USERLED);
-        isFadingRGB[USERLED] = false;
-        startLongFade(USERLED);
-        socketIO_sendColour();
-      }
-      isSelectingColour = false;
       break;
     case AceButton::kEventClicked:
       Serial.println("TOUCH: clicked");
@@ -186,18 +162,13 @@ void setupCapacitiveTouch() {
   touchConfig.setThreshold(TOUCH_THRESHOLD);
 }
 
-long checkFadingLength() {
-  if (digitalRead(FADE_3) == 0 && digitalRead(FADE_1) == 1) {
-    Serial.println("Your fade time is 3 hours");
-    return 180;
-  } else if (digitalRead(FADE_1) == 0 && digitalRead(FADE_3) == 1) {
-    Serial.println("Your fade time is 1 hour");
-    return 60;
-  } else if (digitalRead(FADE_3) == 0 && digitalRead(FADE_1) == 0) {
-    Serial.println("Your fade time is 9 hours");
-    return 540;
-  } else {
-    Serial.println("Your fade time is 6 hours");
-    return 360;
+void potHandler() {
+  if (millis() - prevPotMillis > POT_REFRESH) {
+    prevPotMillis = millis();
+    int potIn = map(analogRead(POT), 0, 4095, 0, 180);
+    if (potIn != getServoAngle(USERSERVO)) {
+      setServoAngle(USERSERVO, potIn);
+      socketIO_sendServo();
+    }
   }
 }
