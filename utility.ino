@@ -7,8 +7,6 @@ void setupPins() {
   pinMode(FADE_3, INPUT_PULLUP);
   pinMode(FADE_1, INPUT_PULLUP);
 
-  pinMode(POT, INPUT);
-
   ButtonConfig* buttonConfigBuiltIn = buttonBuiltIn.getButtonConfig();
   buttonConfigBuiltIn->setEventHandler(handleButtonEvent);
   buttonConfigBuiltIn->setFeature(ButtonConfig::kFeatureClick);
@@ -63,7 +61,9 @@ void handleButtonEvent(AceButton* button, uint8_t eventType, uint8_t buttonState
         case AceButton::kEventPressed:
           break;
         case AceButton::kEventReleased:
-          if (currentSetupStatus == setup_finished) socketIO_sendButtonPress();
+          if (currentSetupStatus == setup_finished) {
+            socketIO_sendButtonPress();
+          }
           break;
         case AceButton::kEventLongPressed:
 #ifdef DEV
@@ -78,9 +78,14 @@ void handleButtonEvent(AceButton* button, uint8_t eventType, uint8_t buttonState
       switch (eventType) {
         case AceButton::kEventPressed:
           Serial.println("TOUCH: pressed");
+          if (currentSetupStatus == setup_finished) {
+            advanceAngle();
+            socketIO_sendServo();
+          }
           break;
         case AceButton::kEventLongPressed:
           Serial.println("TOUCH: Long pressed");
+
           break;
         case AceButton::kEventReleased:
           Serial.println("TOUCH: released");
@@ -100,6 +105,10 @@ void handleTouchEvent(AceButton* button, uint8_t eventType, uint8_t buttonState)
   switch (eventType) {
     case AceButton::kEventPressed:
       Serial.println("TOUCH: pressed");
+      if (currentSetupStatus == setup_finished) {
+        advanceAngle();
+        socketIO_sendServo();
+      }
       break;
     case AceButton::kEventLongPressed:
       Serial.println("TOUCH: Long pressed");
@@ -160,15 +169,4 @@ void setupCapacitiveTouch() {
   Serial.print("Touch threshold is:");
   Serial.println(TOUCH_THRESHOLD);
   touchConfig.setThreshold(TOUCH_THRESHOLD);
-}
-
-void potHandler() {
-  if (millis() - prevPotMillis > POT_REFRESH) {
-    prevPotMillis = millis();
-    int potIn = map(analogRead(POT), 0, 4095, 0, 180);
-    if (potIn != getServoAngle(USERSERVO)) {
-      setServoAngle(USERSERVO, potIn);
-      socketIO_sendServo();
-    }
-  }
 }

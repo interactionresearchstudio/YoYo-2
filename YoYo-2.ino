@@ -4,15 +4,13 @@
 #define FADE_3 22
 #define FADE_1 21
 
-#define EXTERNAL_BUTTON 23
+#define EXTERNAL_BUTTON 12
 #define CAPTOUCH T0
 
 #define LED_BUILTIN 2
 #define LED_BUILTIN_ON HIGH
 
 int BUTTON_BUILTIN =  0;
-
-#define POT 13
 
 bool disconnected = false;
 
@@ -66,17 +64,11 @@ using namespace ace_button;
 
 //Servo
 #include <ESP32Servo.h>
-#define NUMSERVOS 2
-#define USERSERVO 0
-#define REMOTESERVO 1
-Servo servo[2];
-int servoPin[2] = {18, 19};
-#define POT_REFRESH 200
-long prevPotMillis = 0;
-byte currAngle[2];
-byte prevAngle[2];
-long prevServoMillis;
-#define SERVO_REFRESH_RATE 100
+Servo servo;
+int servoPin = 13;
+byte currentAngle = 0;
+const int numOfSections = 8;
+bool isIncreasing;
 
 
 #include "SPIFFS.h"
@@ -251,11 +243,8 @@ void loop() {
       socketIO.loop();
       ledHandler();
       wifiCheck();
-      servoHandler();
       break;
   }
-  servoHandler();
-  potHandler();
   buttonBuiltIn.check();
   buttonExternal.check();
   buttonTouch.check();
