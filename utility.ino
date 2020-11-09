@@ -4,6 +4,9 @@ void setupPins() {
   pinMode(BUTTON_BUILTIN, INPUT);
   pinMode(EXTERNAL_BUTTON, INPUT_PULLUP);
 
+  pinMode(27,OUTPUT);
+  digitalWrite(27,LOW);
+
   pinMode(FADE_3, INPUT_PULLUP);
   pinMode(FADE_1, INPUT_PULLUP);
 
