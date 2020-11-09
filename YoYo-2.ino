@@ -68,7 +68,9 @@ Servo servo;
 int servoPin = 13;
 byte currentAngle = 0;
 const int numOfSections = 8;
-bool isIncreasing;
+bool isIncreasing = true;
+int currAngleArrayPosition = 0;
+byte angles[numOfSections];
 
 
 #include "SPIFFS.h"
@@ -155,6 +157,7 @@ char path[] = "/socket.io/?transport=websocket"; // Socket.IO Base Path
 void setup() {
   Serial.begin(115200);
   setupServo();
+  generateAngles();
   setupPins();
   setupCapacitiveTouch();
 

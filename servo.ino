@@ -19,23 +19,27 @@ byte getAngle(){
   return currentAngle;
 }
 
+void generateAngles(){
+  for(byte i = 0; i < numOfSections; i++){
+    angles[i] = (i*(180/(numOfSections)))+((180/numOfSections)/2);
+  }
+}
 
 void advanceAngle() {
   // Advance
-  if (isIncreasing) currentAngle += 180 / numOfSections;
-  else currentAngle -= 180 / numOfSections;
-
+   if (isIncreasing) currAngleArrayPosition++;
+  else currAngleArrayPosition--;
+  
   // Change direction if we're at either end
-  if (currentAngle > 180) {
+  if (currAngleArrayPosition == numOfSections) {
     isIncreasing = false;
-    currentAngle -= 2 * (180 / numOfSections);
-  } else if (currentAngle < 0) {
+    currAngleArrayPosition = currAngleArrayPosition-2 ;
+  } else if (currAngleArrayPosition < 0) {
     isIncreasing = true;
-    currentAngle += 2 * (180 / numOfSections);
+    currAngleArrayPosition = currAngleArrayPosition+2;
   }
 
-  // Write to servo.
-  servo.write(currentAngle);
+  currentAngle = angles[currAngleArrayPosition];
   Serial.print("New angle: ");
-  Serial.println(currentAngle);
+  Serial.println(angles[currAngleArrayPosition]);
 }
