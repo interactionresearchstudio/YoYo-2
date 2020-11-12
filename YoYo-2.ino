@@ -67,7 +67,7 @@ using namespace ace_button;
 Servo servo;
 int servoPin = 13;
 byte currentAngle = 0;
-const int numOfSections = 8;
+const int numOfSections = 7;
 bool isIncreasing = true;
 int currAngleArrayPosition = 0;
 byte angles[numOfSections];
