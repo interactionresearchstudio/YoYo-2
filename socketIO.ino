@@ -36,8 +36,10 @@ void socketIO_msg(const char * payload, size_t length) {
   if (String(data_project) == "test") {
     blinkDevice();
   } else if (String(data_project) == "YoYo2") {
-    long servo_angle = incomingDoc["data"]["angle"];
-     setAngle(servo_angle);
+    long servo_pos = incomingDoc["data"]["position"];
+    isIncreasing = bitRead(servo_pos, 7);
+    bitWrite(servo_pos, 7, 0);
+    setPosition(servo_pos);
   }
 }
 
@@ -60,7 +62,10 @@ void socketIO_sendServo() {
   doc["macAddress"] = getRemoteMacAddress(1);
   JsonObject data = doc.createNestedObject("data");
   data["project"] = "YoYo2";
-  data["angle"] = String(getAngle());
+  byte currentPos = getPosition();
+  if (isIncreasing) bitWrite(currentPos, 7, 1);
+  else bitWrite(currentPos, 7, 0);
+  data["position"] = String(currentPos);
   String sender;
   serializeJson(doc, sender);
   socketIO.emit("msg", sender.c_str());

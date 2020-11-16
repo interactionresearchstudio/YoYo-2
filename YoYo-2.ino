@@ -66,7 +66,6 @@ using namespace ace_button;
 #include <ESP32Servo.h>
 Servo servo;
 int servoPin = 13;
-byte currentAngle = 0;
 const int numOfSections = 7;
 bool isIncreasing = true;
 int currAngleArrayPosition = 0;
