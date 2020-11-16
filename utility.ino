@@ -111,6 +111,7 @@ void handleTouchEvent(AceButton* button, uint8_t eventType, uint8_t buttonState)
       Serial.println("TOUCH: pressed");
       if (currentSetupStatus == setup_finished) {
         advanceAngle();
+        setAngle(getAngle());
         socketIO_sendServo();
       }
       break;
