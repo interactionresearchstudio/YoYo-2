@@ -6,11 +6,13 @@ void setupServo() {
   ESP32PWM::allocateTimer(3);
   servo.setPeriodHertz(50);    // standard 50 hz servo
   servo.attach(servoPin, 150, 2500); // attaches the servo on pin 18 to the servo object
-  servo.write(0);
-
+  servo.write(180);
+  delay(500);
 }
 
 void setAngle(byte angle) {
+  Serial.print("Moved servo to ");
+  Serial.println(angle);
   servo.write(angle);
   currentAngle = angle;
 }
@@ -25,6 +27,7 @@ void generateAngles() {
   }
   angles[0] = angles[0] - 2;
   angles[numOfSections-1] = angles[numOfSections-1] + 2;
+  servo.write(angles[0]);
 }
 
 void advanceAngle() {

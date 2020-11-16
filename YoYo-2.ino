@@ -5,7 +5,7 @@
 #define FADE_1 21
 
 #define EXTERNAL_BUTTON 12
-#define CAPTOUCH T0
+#define CAPTOUCH T6 // D14
 
 #define LED_BUILTIN 2
 #define LED_BUILTIN_ON HIGH
