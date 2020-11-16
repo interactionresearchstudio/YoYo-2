@@ -14,11 +14,21 @@ void setAngle(byte angle) {
   Serial.print("Moved servo to ");
   Serial.println(angle);
   servo.write(angle);
-  currentAngle = angle;
+}
+
+void setPosition(byte pos) {
+  Serial.print("Moved servo to ");
+  Serial.println(angles[pos]);
+  servo.write(angles[pos]);
+  currAngleArrayPosition = pos;
+}
+
+byte getPosition() {
+  return currAngleArrayPosition;
 }
 
 byte getAngle() {
-  return currentAngle;
+  return angles[currAngleArrayPosition];
 }
 
 void generateAngles() {
@@ -26,8 +36,8 @@ void generateAngles() {
     angles[i] = (i * (180 / (numOfSections))) + ((180 / numOfSections) / 2);
   }
   angles[0] = angles[0] - 2;
-  angles[numOfSections-1] = angles[numOfSections-1] + 2;
-  servo.write(angles[0]);
+  angles[numOfSections - 1] = angles[numOfSections - 1] + 2;
+  setPosition(0);
 }
 
 void advanceAngle() {
@@ -44,7 +54,6 @@ void advanceAngle() {
     currAngleArrayPosition = currAngleArrayPosition + 2;
   }
 
-  currentAngle = angles[currAngleArrayPosition];
   Serial.print("New angle: ");
   Serial.println(angles[currAngleArrayPosition]);
 }
