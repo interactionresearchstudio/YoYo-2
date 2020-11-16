@@ -21,8 +21,6 @@ void setPosition(byte pos) {
   Serial.println(angles[pos]);
   servo.write(angles[pos]);
   currAngleArrayPosition = pos;
-  if (currAngleArrayPosition == 0) isIncreasing = true;
-  if (currAngleArrayPosition == numOfSections - 1) isIncreasing = false;
 }
 
 byte getPosition() {
