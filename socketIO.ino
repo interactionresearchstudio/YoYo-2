@@ -1,3 +1,10 @@
+void socketIO_offline(const char * payload, size_t length) {
+  Serial.println("partner is offline");
+  delay(50);
+  isIncreasing = prevIncreasing;
+  setPosition(prevPos);
+}
+
 
 void socketIO_Connected(const char * payload, size_t length) {
   Serial.println("Socket.IO Connected!");
@@ -36,6 +43,9 @@ void socketIO_msg(const char * payload, size_t length) {
   if (String(data_project) == "test") {
     blinkDevice();
   } else if (String(data_project) == "YoYo2") {
+    prevPos = getPosition();
+    prevIncreasing = isIncreasing;
+
     long servo_pos = incomingDoc["data"]["position"];
     isIncreasing = bitRead(servo_pos, 7);
     bitWrite(servo_pos, 7, 0);
@@ -77,6 +87,7 @@ void setupSocketIOEvents() {
   socketIO.on("event", socketIO_event);
   socketIO.on("send mac", socketIO_sendMac);
   socketIO.on("msg", socketIO_msg);
+  socketIO.on("partner offline", socketIO_offline);
   socketIO.begin(host, port, path);
   Serial.println("attached socketio listeners");
 }

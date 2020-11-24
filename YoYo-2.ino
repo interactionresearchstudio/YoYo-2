@@ -70,7 +70,8 @@ const int numOfSections = 7;
 bool isIncreasing = true;
 int currAngleArrayPosition = 0;
 byte angles[numOfSections];
-
+byte prevPos = 0;
+bool prevIncreasing = false;
 
 #include "SPIFFS.h"
 
@@ -143,6 +144,8 @@ unsigned long resetTime;
 int resetDurationMs = 4000;
 
 String myID = "";
+
+#define STAGING
 
 /// Socket.IO Settings ///
 #ifndef STAGING

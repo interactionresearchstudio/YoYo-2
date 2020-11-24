@@ -4,8 +4,8 @@ void setupPins() {
   pinMode(BUTTON_BUILTIN, INPUT);
   pinMode(EXTERNAL_BUTTON, INPUT_PULLUP);
 
-  pinMode(27,OUTPUT);
-  digitalWrite(27,LOW);
+  pinMode(27, OUTPUT);
+  digitalWrite(27, LOW);
 
   pinMode(FADE_3, INPUT_PULLUP);
   pinMode(FADE_1, INPUT_PULLUP);
@@ -82,6 +82,8 @@ void handleButtonEvent(AceButton* button, uint8_t eventType, uint8_t buttonState
         case AceButton::kEventPressed:
           Serial.println("TOUCH: pressed");
           if (currentSetupStatus == setup_finished) {
+            prevPos = getPosition();
+            prevIncreasing = isIncreasing;
             advanceAngle();
             setAngle(getAngle());
             socketIO_sendServo();
@@ -110,6 +112,8 @@ void handleTouchEvent(AceButton* button, uint8_t eventType, uint8_t buttonState)
     case AceButton::kEventPressed:
       Serial.println("TOUCH: pressed");
       if (currentSetupStatus == setup_finished) {
+        prevPos = getPosition();
+        prevIncreasing = isIncreasing;
         advanceAngle();
         setAngle(getAngle());
         socketIO_sendServo();
