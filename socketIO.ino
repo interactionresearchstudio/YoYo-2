@@ -5,7 +5,6 @@ void socketIO_offline(const char * payload, size_t length) {
   setPosition(prevPos);
 }
 
-
 void socketIO_Connected(const char * payload, size_t length) {
   Serial.println("Socket.IO Connected!");
   blinkOnConnect();

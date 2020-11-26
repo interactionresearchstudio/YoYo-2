@@ -158,8 +158,8 @@ char path[] = "/socket.io/?transport=websocket"; // Socket.IO Base Path
 
 void setup() {
   Serial.begin(115200);
-  setupServo();
   generateAngles();
+  setupServo();
   setupPins();
   setupCapacitiveTouch();
 
