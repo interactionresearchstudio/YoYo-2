@@ -145,8 +145,6 @@ int resetDurationMs = 4000;
 
 String myID = "";
 
-#define STAGING
-
 /// Socket.IO Settings ///
 #ifndef STAGING
 char host[] = "irs-socket-server.herokuapp.com"; // Socket.IO Server Address
