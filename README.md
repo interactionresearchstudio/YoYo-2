@@ -2,8 +2,8 @@
 ![Downloads](https://img.shields.io/github/downloads/interactionresearchstudio/YoYo-2/total)
 ![Release](https://img.shields.io/github/v/release/interactionresearchstudio/YoYo-2?include_prereleases)
 
-# Yo-Yo Message Wheel
-Firmware for Yo-Yo Machines Message Wheel.
+# Yo-Yo Speed Dial
+Firmware for Yo-Yo Machines Speed Dial.
 
 ## How to use
 Please use the Yo-Yo Firmware Uploader to upload the latest firmware onto your device.
