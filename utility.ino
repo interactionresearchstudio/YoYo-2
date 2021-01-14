@@ -14,7 +14,7 @@ void setupPins() {
   buttonConfigBuiltIn->setEventHandler(handleButtonEvent);
   buttonConfigBuiltIn->setFeature(ButtonConfig::kFeatureClick);
   buttonConfigBuiltIn->setFeature(ButtonConfig::kFeatureLongPress);
-  buttonConfigBuiltIn->setLongPressDelay(LONG_TOUCH);
+  buttonConfigBuiltIn->setLongPressDelay(LONG_PRESS);
 
   touchConfig.setFeature(ButtonConfig::kFeatureClick);
   touchConfig.setFeature(ButtonConfig::kFeatureLongPress);
@@ -69,9 +69,7 @@ void handleButtonEvent(AceButton* button, uint8_t eventType, uint8_t buttonState
           }
           break;
         case AceButton::kEventLongPressed:
-#ifdef DEV
           factoryReset();
-#endif
           break;
         case AceButton::kEventRepeatPressed:
           break;
@@ -178,4 +176,19 @@ void setupCapacitiveTouch() {
   Serial.print("Touch threshold is:");
   Serial.println(TOUCH_THRESHOLD);
   touchConfig.setThreshold(TOUCH_THRESHOLD);
+}
+
+void setLastConnected(String ssid) {
+  preferences.begin("scads", false);
+  preferences.putString("lastConnected",ssid);
+  preferences.end();
+
+}
+
+String getLastConnected() {
+  String lastConnected;
+  preferences.begin("scads", false);
+  lastConnected = preferences.getString("lastConnected", "");
+  preferences.end();
+  return lastConnected;
 }
